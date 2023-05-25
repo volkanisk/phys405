@@ -82,9 +82,9 @@ while cap.open:
                 history.pop(0)
                 history.append([distance,end_time])
 
-        # Signal writing
-        voltage_array = signal_creator(history)
-        nidaqmx.Task().write(voltage_array, auto_start=True)
+                # Signal writing
+                voltage_array = signal_creator(history)
+                nidaqmx.Task().write(voltage_array, auto_start=True)
 
 
     cv2.imshow("frame", frame)      # showing frame

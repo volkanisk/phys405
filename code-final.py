@@ -9,21 +9,21 @@ import matplotlib.pyplot as plt
 def mapper(pixel_dist):
     "Converts pixel distance to voltage with 1/d^2 relation"
     max_voltage = 5
-    min_voltage = 2
+    min_voltage = 0.01
 
-    max_pixel_sq= 1/ (400)   #max pixel 300
-    min_pixel_sq= 1/ (100)     #min pixel 100
+    max_pixel_sq= 1/ (500)   #max pixel 500
+    min_pixel_sq= 1/ (180)     #min pixel 100
 
     volt_distance= min_voltage+ (1/pixel_dist - max_pixel_sq) * (max_voltage-min_voltage) /(min_pixel_sq - max_pixel_sq)
-    if pixel_dist >400:
-        volt_distance = 2.01
-    elif pixel_dist < 100:
+    if pixel_dist >500:
+        volt_distance = 0.01
+    elif pixel_dist < 180:
         volt_distance = 4.99
     return volt_distance
 
 def signal_creator(history):
     "Acquires oldest data in history and creates voltage array using mapper"
-    pix_distance = history[0][0]
+    pix_distance = history[6][0]    # for recipocal 0, nonrecipocal 6
     voltage = mapper(pix_distance)
     voltage_array = np.asarray([voltage,voltage])
     return voltage_array
@@ -33,7 +33,7 @@ def signal_creator(history):
 cap = cv2.VideoCapture(0)   #from camera list get camera, if additional camera turn this to 1
 
 # Object detection from Stable camera
-object_detector = cv2.createBackgroundSubtractorMOG2(history=1000, varThreshold=100) # hist and var should be tried
+object_detector = cv2.createBackgroundSubtractorMOG2(history=1000, varThreshold=80) # hist and var should be tried
 
 # Device creator
 max_voltage = 5
@@ -111,7 +111,7 @@ with nidaqmx.Task() as task:
                     print(voltage_array)
                     task.write(voltage_array, auto_start=True)
                     time.sleep(threshold/2)
-                    task.write([0,0], auto_start= True)
+                    # task.write([0,0], auto_start= True)
 
 
         cv2.imshow("frame", frame)      # showing frame
